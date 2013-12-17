@@ -1,19 +1,20 @@
 == Http Client Detector ==
 
-A Rack middleware to detect basic caracteristics of http client
+A Rack middleware to detect basic caracteristics of http client (browser+device)
 
 
 == Usage (Rails 3) ==
-Add it to your Gemfile:
-gem "http_client_detector"
+Add it your Gemfile:
+gem 'http_client_detector', :git => 'https://github.com/experteer/http_client_detector.git'
 
 Ad it to your Rack stack:
-use Rack::HttpClientDetector
+use HttpClientDetector
 
 In your application_controller.rb you can access client info:
 
-env['http_client_info'].phone?
-env['http_client_info'].robot?
+request.env['rack.http_client_info'].phone?
+request.env['rack.http_client_info'].robot?
 
-and get it's matched robot name with
-env['rack_detect_robots'].robot_name
+Status check:
+request.env['rack.http_client_info'].ok?
+

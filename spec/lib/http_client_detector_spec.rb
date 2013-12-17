@@ -10,7 +10,7 @@ describe 'DetectorApp' do
     {:status => 'ok', :phone => true, :robot => false}
   }
 
-  describe 'get iphone client info' do
+  describe 'get http_client_info from webservice' do
     before(:each) do
       request_headers_expected = {'User-Agent'=> iphone}
       response_body_mock = {:status => 'ok', :phone => true, :robot => false}.to_json
@@ -18,6 +18,7 @@ describe 'DetectorApp' do
       service_request = stub_request(:get, RSpec.configuration.detector_test_url).
                          with(:headers => request_headers_expected).to_return( :body => response_body_mock  )
 
+      set_cookie 'testkey=testvalue'
       get '/', {}, 'HTTP_USER_AGENT' => iphone
 
       service_request.should have_been_requested
@@ -37,6 +38,35 @@ describe 'DetectorApp' do
 
     end
   end
+
+  describe 'get http_client_info from cookies' do
+    before(:each) do
+      request_headers_expected = {'User-Agent'=> iphone}
+      response_body_mock = {:status => 'ok', :phone => true, :robot => false}.to_json
+
+      service_request = stub_request(:get, RSpec.configuration.detector_test_url)
+
+      set_cookie "http_client_info=#{ CGI.escape(iphone_info.to_json) }"
+      get '/', {}, 'HTTP_USER_AGENT' => iphone
+
+      service_request.should_not have_been_requested
+    end
+
+
+    it 'should respond with status 200' do
+      last_response.status.should == 200
+    end
+
+    describe 'response body' do
+      subject{ JSON.parse(last_response.body) }
+
+      its(['status']){ should == iphone_info[:status] }
+      its(['phone']){ should == iphone_info[:phone] }
+      its(['robot']){ should == iphone_info[:robot] }
+
+    end
+  end
+
 
   describe 'service failure' do
     before(:each) do
