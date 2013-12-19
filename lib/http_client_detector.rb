@@ -15,11 +15,15 @@ class HttpClientDetector
     info = Rack::HttpClientInfo.new.load_from_raw_data( data_from_cookies(env['HTTP_COOKIE']) )
     unless info.verified?
       info = Rack::HttpClientInfo.new.load_from_raw_data(  data_from_service(env['HTTP_USER_AGENT']) )
-      if info.verified?
-        env['HTTP_COOKIE'] ||= ''
-        env['HTTP_COOKIE'] = (serialize_data_for_cookies( info ) + env['HTTP_COOKIE'])
-      end
+      #if info.verified?
+      #  env['HTTP_COOKIE'] ||= ''
+      #  env['HTTP_COOKIE'] = (serialize_data_for_cookies( info ) + env['HTTP_COOKIE'])
+      #  logger.debug "http_client_detector: COOKIES UPDATED: #{ env['HTTP_COOKIE'] }"
+      #end
     end
+
+
+    # logger.debug "http_client_detector: COOKIES JAR: #{ env['action_dispatch.cookies'].inspect }"
 
     env['rack.http_client_info'] = info
 
@@ -45,6 +49,7 @@ class HttpClientDetector
     matched = /http_client_info=(.+?)(;|$)/.match(cookies.to_s)
     data = nil
     if matched && matched[1]
+      logger.debug "http_client_detector: COOKIES CONTAIN: #{ matched[1] }"
       raw_data = CGI.unescape( matched[1] )
       data = JSON.parse(raw_data)
     end
@@ -56,9 +61,10 @@ class HttpClientDetector
   end
 
   def data_from_service(user_agent)
-    response_body = RestClient.get(@config[:url], { :accept => :json, :user_agent =>  user_agent}).body
+    resp = RestClient.get(@config[:url], { :accept => :json, :user_agent =>  user_agent})
 
-    JSON.parse(response_body)
+    logger.debug "http_client_detector: service request finished, status == #{ resp.code }"
+    JSON.parse(resp.body)
 
   rescue => e
     logger.error("http_client_detector: getting data from service failed: #{e.class} #{e.message}")
