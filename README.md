@@ -1,29 +1,40 @@
-== Http Client Detector ==
+# Http Client Detector gem
 
 A Rack middleware that detects the caracteristics of http client,
 taking into account platform, browser version.
 In addition it recognizes bots.
 
-== Quick Installation ==
-Gemfile:
+## Testing
+
+  git clone https://github.com/experteer/http_client_detector.git
+  bundle
+  rspec
+
+## Quick Installation
+
+add to Gemfile:
+  
   gem 'http_client_detector', :git => 'https://github.com/experteer/http_client_detector.git'
 
-config/environment.rb (Rails 3):
+add to config/environment.rb (Rails 3):
 
   config.middleware.use( HttpClientDetector, :url => 'http://www.tstruk.experteer.de:8080/' )
 
-For other Rack apps:
+for other Rack apps, add:
 
   use( HttpClientDetector, :url => 'http://www.tstruk.experteer.de:8080/' )
 
-In your application_controller.rb you can access client info using these accessor methods:
+## Using with Rails app
+
+In application_controller.rb access the data using these methods:
 
   request.env['rack.http_client_info'].phone?
   request.env['rack.http_client_info'].robot?
   request.env['rack.http_client_info'].verified?
 
+### Caching the client characteristics in cookies:
 
-Cahe the client characteristics using Cookies:
+It's recommended to cache the obtained data in cookies, use key: 'http_client_info'
 
   before_filter :cache_client_info_in_cookies
 
