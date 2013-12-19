@@ -1,6 +1,7 @@
 require 'http_client_info'
 require 'cgi'
 require 'json'
+require 'logger'
 
 class HttpClientDetector
 
@@ -12,18 +13,15 @@ class HttpClientDetector
   def call(env)
     # puts env.inspect
     info = Rack::HttpClientInfo.new.load_from_raw_data( data_from_cookies(env['HTTP_COOKIE']) )
-    unless info.ok?
+    unless info.verified?
       info = Rack::HttpClientInfo.new.load_from_raw_data(  data_from_service(env['HTTP_USER_AGENT']) )
+      if info.verified?
+        env['HTTP_COOKIE'] ||= ''
+        env['HTTP_COOKIE'] = (serialize_data_for_cookies( info ) + env['HTTP_COOKIE'])
+      end
     end
 
     env['rack.http_client_info'] = info
-
-    if info.ok?
-      env['HTTP_COOKIE'] ||= ''
-      env['HTTP_COOKIE'] = (serialize_data_for_cookies( info ) + env['HTTP_COOKIE'])
-    end
-
-
 
     @app.call(env)
   end
@@ -31,6 +29,12 @@ class HttpClientDetector
 
   private
 
+  def logger
+    @logger ||= ( defined?(Rails) ?
+        Rails.logger :
+        Logger.new(File.join(File.dirname(__FILE__), '../log/', "#{ENV['RACK_ENV'] || ENV['RAILS_ENV']}.log" ))
+    )
+  end
 
   def serialize_data_for_cookies(data)
     value = CGI.escape( data.to_json )
@@ -47,17 +51,18 @@ class HttpClientDetector
 
     data || { :status => 'error', :message => 'Cookies empty' }
   rescue => e
-    {:status => 'error', :message => "Extracting data from cookies failed: #{e.message}" }
+    logger.error("http_client_detector: extracting data from cookies failed: #{e.class} #{e.message}")
+    nil
   end
 
   def data_from_service(user_agent)
-   # { :status => 'success', :ua => user_agent }
     response_body = RestClient.get(@config[:url], { :accept => :json, :user_agent =>  user_agent}).body
 
     JSON.parse(response_body)
 
   rescue => e
-    {:status => 'error', :service_response => e.response, :message => e.message }
+    logger.error("http_client_detector: getting data from service failed: #{e.class} #{e.message}")
+    nil
   end
 
 end

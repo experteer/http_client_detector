@@ -7,16 +7,15 @@ describe 'DetectorApp' do
   }
 
   let(:iphone_info) {
-    {:status => 'ok', :phone => true, :robot => false}
+    {:verified => true, :phone => true, :robot => false}
   }
 
   describe 'get http_client_info from webservice' do
     before(:each) do
       request_headers_expected = {'User-Agent'=> iphone}
-      response_body_mock = {:status => 'ok', :phone => true, :robot => false}.to_json
 
       service_request = stub_request(:get, RSpec.configuration.detector_test_url).
-                         with(:headers => request_headers_expected).to_return( :body => response_body_mock  )
+                         with(:headers => request_headers_expected).to_return( :body => iphone_info.to_json  )
 
       set_cookie 'testkey=testvalue'
       get '/', {}, 'HTTP_USER_AGENT' => iphone
@@ -32,7 +31,7 @@ describe 'DetectorApp' do
     describe 'response body' do
       subject{ JSON.parse(last_response.body) }
 
-      its(['status']){ should == iphone_info[:status] }
+      its(['verified']){ should == iphone_info[:verified] }
       its(['phone']){ should == iphone_info[:phone] }
       its(['robot']){ should == iphone_info[:robot] }
 
@@ -60,7 +59,7 @@ describe 'DetectorApp' do
     describe 'response body' do
       subject{ JSON.parse(last_response.body) }
 
-      its(['status']){ should == iphone_info[:status] }
+      its(['verified']){ should == iphone_info[:verified] }
       its(['phone']){ should == iphone_info[:phone] }
       its(['robot']){ should == iphone_info[:robot] }
 
@@ -88,9 +87,9 @@ describe 'DetectorApp' do
     describe 'response body' do
       subject{ JSON.parse(last_response.body) }
 
-      its(['status']){ should == 'error' }
-      its(['message']){ should == '500 Internal Server Error' }
-      its(['service_response']){ should == 'service not responding' }
+      its(['verified']){ should == false }
+      its(['phone']){ should == false }
+      its(['robot']){ should == false }
 
     end
 

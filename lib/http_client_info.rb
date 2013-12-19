@@ -1,36 +1,28 @@
 module Rack
   class HttpClientInfo < ::Hash
 
-    def load_from_raw_data(raw_data)
-      raw_data.each do |key, value|
-        if %w{phone robot status service_response message}.include?(key.to_s)
-          self[key.to_sym] = value
-        end
-      end
 
-      unless ok?
-        self.merge! error_fallback_device_info
+    # @param [Hash] raw_data expects to contain keys: 'verified', 'phone', 'robot'
+    # if raw_data is blank, all these values will be set to false (as a fall-back scenario)
+    def load_from_raw_data(raw_data)
+      raw_data ||= { }
+      %w{phone robot verified}.each do |key|
+        self[key.to_sym] = (raw_data[key] == true)
       end
 
       self.freeze
     end
 
-    def ok?
-      self[:status] == 'ok'
+    def verified?
+      self[:verified]
     end
 
     def phone?
-      !!self[:phone]
+      self[:phone]
     end
 
     def robot?
-      !!self[:robot]
-    end
-
-    private
-
-    def error_fallback_device_info
-      {:phone => false, :robot => false}
+      self[:robot]
     end
 
   end
