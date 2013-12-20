@@ -36,6 +36,19 @@ describe 'DetectorApp' do
       its(['robot']){ should == iphone_info[:robot] }
 
     end
+
+    describe 'response headers' do
+      subject{ last_response.headers }
+
+      its(['Set-Cookie']){should match(/http_client_info=.+;/)}
+    end
+
+    describe 'response header Set-Cookie http_client_info' do
+      subject{ JSON.parse(CGI.unescape /http_client_info=(.+?);/.match(last_response.headers['Set-Cookie'])[1]) }
+
+      it {should == {'phone'=>true, 'verified'=>true, 'robot'=>false} }
+    end
+
   end
 
   describe 'get http_client_info from cookies' do

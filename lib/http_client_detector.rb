@@ -17,7 +17,7 @@ class HttpClientDetector
   def call(env)
     @cookies = env['rack.cookies']
 
-    info = Rack::HttpClientInfo.new.load_from_raw_data( data_from_cookies ) # (env) || data_from_cookies(env['HTTP_COOKIE'])
+    info = Rack::HttpClientInfo.new.load_from_raw_data( data_from_cookies )
     unless info.verified?
       info = Rack::HttpClientInfo.new.load_from_raw_data(  data_from_service(env['HTTP_USER_AGENT']) )
     end
@@ -50,7 +50,7 @@ class HttpClientDetector
   end
 
   def data_from_cookies
-    logger.debug("http_client_detector: RACK COOKIES #{ cookies.inspect }") if cookies
+    # logger.debug("http_client_detector: RACK COOKIES #{ cookies.inspect }") if cookies
     if cookies && cookies['http_client_info']
       JSON.parse(cookies['http_client_info'])
     end
