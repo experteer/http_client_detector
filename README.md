@@ -16,10 +16,12 @@ add to Gemfile:
   gem 'http_client_detector', :git => 'https://github.com/experteer/http_client_detector.git'
 
   # config/environment.rb (Rails 3):
-  config.middleware.use( HttpClientDetector, :url => 'http://www.tstruk.experteer.de:8080/' )
+  config.middleware.insert_before ActionDispatch::Cookies, HttpClientDetector, :url => 'http://www.tstruk.experteer.de:8080/'
+  config.middleware.insert_before HttpClientDetector, Rack::Cookies
 
   # for other Rack apps
-  use( HttpClientDetector, :url => 'http://www.tstruk.experteer.de:8080/' )
+  use Rack::Cookies
+  use HttpClientDetector, :url => 'http://www.tstruk.experteer.de:8080/'
 
   # In application_controller.rb access the data using these methods:
   request.env['rack.http_client_info'].phone?
@@ -27,17 +29,3 @@ add to Gemfile:
   request.env['rack.http_client_info'].verified?
 ```
 
-### Caching the client characteristics in cookies:
-
-It's recommended to cache the obtained data in cookies, use key: 'http_client_info'
-
-```ruby
-  before_filter :cache_client_info_in_cookies
-
-  def cache_client_info_in_cookies
-    info = request.env['rack.http_client_info']
-    if info.verified?
-      cookies['http_client_info'] = info.to_json
-    end
-  end
-```
