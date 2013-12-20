@@ -18,6 +18,7 @@ module RSpecAppMixin
   def app()
     (Rack::Builder.new {
       map '/' do
+        use Rack::Cookies
         use HttpClientDetector, :url => 'http://client-detector-test.experteer.com/' # 'http://localhost:4567/'
         run lambda { |env| [200, { 'Content-Type' => 'application/json' }, env['rack.http_client_info'].to_json  ] }
       end

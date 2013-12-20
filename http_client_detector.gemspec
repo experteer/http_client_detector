@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.authors = ['Taras Struk']
   s.date = '2013-12-16'
   s.extra_rdoc_files = [
-      'README.txt'
+      'README.md'
   ]
   s.files = [
       'lib/http_client_detector.rb'
@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.specification_version = 3
 
   s.add_runtime_dependency(%q<rack>, ['1.4.5'])
+  s.add_runtime_dependency(%q<rack-contrib>, ['1.1.0'])
   s.add_runtime_dependency(%q<rest-client>, ['1.6.7'])
   s.add_runtime_dependency(%q<json>, ['~> 1.7'])
 
