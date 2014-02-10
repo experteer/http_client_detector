@@ -1,4 +1,4 @@
-require 'http_client_info'
+require "#{File.dirname(__FILE__)}/http_client_info"
 require 'cgi'
 require 'json'
 require 'logger'
