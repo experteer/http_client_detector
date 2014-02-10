@@ -8,9 +8,15 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files = [
       'README.md'
   ]
-  s.files = [
-      'lib/http_client_detector.rb'
-  ]
+  s.files = %w{
+      README.md
+      Gemfile
+      Gemfile.lock
+      spec/spec_helper.rb
+      spec/lib/http_client_detector_spec.rb
+      lib/http_client_detector.rb
+      lib/http_client_info.rb
+  }
   s.homepage = 'http://github.com/experteer/http_client_detector'
   s.require_paths = ['lib']
   s.rubygems_version = '1.8.26'
