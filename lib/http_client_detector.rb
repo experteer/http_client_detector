@@ -28,13 +28,13 @@ class HttpClientDetector
     status, headers, body = @app.call(env)
 
     # cookies = env['action_dispatch.cookies']
-    logger.debug("http_client_detector: COOKIES BEFORE: #{ cookies.inspect }")
+    #logger.debug("http_client_detector: COOKIES BEFORE: #{ cookies.inspect }")
 
     if cookies && cookies['http_client_info'].nil? && info.verified?
       cookies['http_client_info'] = info.to_json
     end
 
-    logger.debug("http_client_detector: COOKIES AFTER: #{ cookies.inspect }")
+    #logger.debug("http_client_detector: COOKIES AFTER: #{ cookies.inspect }")
 
     [status, headers, body]
   end
@@ -63,7 +63,7 @@ class HttpClientDetector
   def data_from_service(user_agent)
     resp = RestClient.get(@config[:url], { :accept => :json, :user_agent =>  user_agent})
 
-    logger.debug "http_client_detector: service request finished, status == #{ resp.code }"
+    #logger.debug "http_client_detector: service request finished, status == #{ resp.code }"
     JSON.parse(resp.body)
 
   rescue => e
