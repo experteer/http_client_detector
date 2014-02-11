@@ -16,7 +16,9 @@ add to Gemfile:
   gem 'http_client_detector', :git => 'https://github.com/experteer/http_client_detector.git'
 
   # config/environment.rb (Rails 3):
-  config.middleware.insert_before ActionDispatch::Cookies, HttpClientDetector, :url => 'http://www.tstruk.experteer.de:8080/'
+  config.middleware.insert_before ActionDispatch::Cookies, HttpClientDetector,
+      :url => 'http://www.tstruk.experteer.de:8080/',
+      :exclude_host => /api\.experteer\.com/i
   config.middleware.insert_before HttpClientDetector, Rack::Cookies
 
   # for other Rack apps

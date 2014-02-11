@@ -15,11 +15,17 @@ class HttpClientDetector
   attr_reader :cookies
 
   def call(env)
+    request = Rack::Request.new(env)
+    # puts "HOST: ----#{request.host} ------"
+    if (@config[:exclude_host].class == Regexp) && ( @config[:exclude_host].match(request.host) )
+      return @app.call(env)
+    end
+
     @cookies = env['rack.cookies']
 
     info = Rack::HttpClientInfo.new.load_from_raw_data( data_from_cookies )
     unless info.verified?
-      info = Rack::HttpClientInfo.new.load_from_raw_data(  data_from_service(env['HTTP_USER_AGENT']) )
+      info = Rack::HttpClientInfo.new.load_from_raw_data(  data_from_service( request.user_agent ) )
     end
 
 
