@@ -48,9 +48,28 @@ describe 'DetectorApp' do
     end
   end
 
-  describe 'get http_client_info from webservice' do
+
+  describe 'bypass POST requests' do
+
     before(:each) do
       request_headers_expected = {'User-Agent'=> iphone}
+
+      service_request = stub_request(:get, RSpec.configuration.detector_test_url).to_return( :body => iphone_info.to_json  )
+
+      post '/', {}, 'HTTP_USER_AGENT' => iphone
+
+      service_request.should_not have_been_requested
+    end
+
+
+    it 'should respond with status 200' do
+      last_response.status.should == 200
+    end
+  end
+
+  describe 'get http_client_info from webservice' do
+    before(:each) do
+      request_headers_expected = {'User-Agent'=> iphone,  'Experteer-Service' => 'client_detector'}
 
       service_request = stub_request(:get, RSpec.configuration.detector_test_url).
                          with(:headers => request_headers_expected).to_return( :body => iphone_info.to_json  )

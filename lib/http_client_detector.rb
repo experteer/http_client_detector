@@ -44,6 +44,8 @@ class HttpClientDetector
 
 
   def allow_detection_for_request?(request)
+    return false unless request.get?
+
     ex_hosts = @config[:exclude_hosts] || @config[:exclude_host] || [ ]
     hosts_to_skip = ((ex_hosts.class == Array) ? ex_hosts : [ ex_hosts ]).compact
 
@@ -77,7 +79,7 @@ class HttpClientDetector
   end
 
   def data_from_service(user_agent)
-    resp = RestClient.get(@config[:url], { :accept => :json, :user_agent =>  user_agent})
+    resp = RestClient.get(@config[:url], { :accept => :json, :user_agent =>  user_agent, :experteer_service => 'client_detector'})
 
     JSON.parse(resp.body)
 
