@@ -18,7 +18,7 @@ add to Gemfile:
   # config/environment.rb (Rails 3):
   config.middleware.insert_before ActionDispatch::Cookies, HttpClientDetector,
       :url => 'http://www.tstruk.experteer.de:8080/',
-      :exclude_host => /api\.experteer\.com/i
+      :exclude_hosts => [ /api\.experteer\.com/i, 'www.experteer.at', /\.de$/i ]
   config.middleware.insert_before HttpClientDetector, Rack::Cookies
 
   # for other Rack apps
