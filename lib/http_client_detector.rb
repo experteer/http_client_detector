@@ -7,23 +7,21 @@ require 'rack/contrib/cookies'
 class HttpClientDetector
 
   def initialize(app, config={ })
-    @app=app
+    @app = app
     @config = config
-    @cookies = nil
   end
 
-  attr_reader :cookies
 
   def call(env)
     request = Rack::Request.new(env)
-    # puts "HOST: ----#{request.host} ------"
-    if (@config[:exclude_host].class == Regexp) && ( @config[:exclude_host].match(request.host) )
+
+    unless allow_detection_for_request?(request)
       return @app.call(env)
     end
 
-    @cookies = env['rack.cookies']
+    cookies = env['rack.cookies']
 
-    info = Rack::HttpClientInfo.new.load_from_raw_data( data_from_cookies )
+    info = Rack::HttpClientInfo.new.load_from_raw_data( data_from_cookies(cookies) )
     unless info.verified?
       info = Rack::HttpClientInfo.new.load_from_raw_data(  data_from_service( request.user_agent ) )
     end
@@ -33,20 +31,33 @@ class HttpClientDetector
 
     status, headers, body = @app.call(env)
 
-    # cookies = env['action_dispatch.cookies']
-    #logger.debug("http_client_detector: COOKIES BEFORE: #{ cookies.inspect }")
-
     if cookies && cookies['http_client_info'].nil? && info.verified?
       cookies['http_client_info'] = info.to_json
     end
 
-    #logger.debug("http_client_detector: COOKIES AFTER: #{ cookies.inspect }")
 
     [status, headers, body]
   end
 
 
   private
+
+
+  def allow_detection_for_request?(request)
+    ex_hosts = @config[:exclude_hosts] || @config[:exclude_host] || [ ]
+    hosts_to_skip = ((ex_hosts.class == Array) ? ex_hosts : [ ex_hosts ]).compact
+
+    hosts_to_skip.each do |h|
+      if (h.class == Regexp) && ( h.match(request.host) )
+        return false
+      end
+      if (h.class == String) && ( h.downcase == request.host.downcase )
+        return false
+      end
+    end
+
+    true
+  end
 
   def logger
     @logger ||= ( defined?(Rails) ?
@@ -55,8 +66,7 @@ class HttpClientDetector
     )
   end
 
-  def data_from_cookies
-    # logger.debug("http_client_detector: RACK COOKIES #{ cookies.inspect }") if cookies
+  def data_from_cookies(cookies)
     if cookies && cookies['http_client_info']
       JSON.parse(cookies['http_client_info'])
     end
@@ -69,7 +79,6 @@ class HttpClientDetector
   def data_from_service(user_agent)
     resp = RestClient.get(@config[:url], { :accept => :json, :user_agent =>  user_agent})
 
-    #logger.debug "http_client_detector: service request finished, status == #{ resp.code }"
     JSON.parse(resp.body)
 
   rescue => e
