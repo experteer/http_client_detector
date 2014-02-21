@@ -79,9 +79,20 @@ class HttpClientDetector
   end
 
   def data_from_service(user_agent)
-    resp = RestClient.get(@config[:url], { :accept => :json, :user_agent =>  user_agent, :experteer_service => 'client_detector'})
+    c = Curl::Easy.new( @config[:url] )
+    c.headers['Experteer-Service']= 'client_detector'
+    c.headers['User-Agent'] = user_agent
+    c.headers['Connection'] = 'close'
 
-    JSON.parse(resp.body)
+    #resp = RestClient.get(@config[:url], { :accept => :json, :user_agent =>  user_agent, :experteer_service => 'client_detector'})
+    #JSON.parse(resp.body)
+
+    if c.perform && (c.response_code == 200)
+      JSON.parse( c.body_str )
+    else
+      logger.error("http_client_detector: getting data from service failed: #{ c.response_code } #{ c.body_str }")
+      nil
+    end
 
   rescue => e
     logger.error("http_client_detector: getting data from service failed: #{e.class} #{e.message}")
