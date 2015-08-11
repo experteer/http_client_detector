@@ -24,8 +24,8 @@ Gem::Specification.new do |s|
 
   s.specification_version = 3
 
-  s.add_runtime_dependency "rack", "1.4.5"
-  s.add_runtime_dependency "rack-contrib", "1.1.0"
+  s.add_runtime_dependency "rack", "~> 1.4"
+  s.add_runtime_dependency "rack-contrib", "~> 1.2.0"
   s.add_runtime_dependency "rest-client", "1.6.7"
   s.add_runtime_dependency "json", "~> 1.7"
 
