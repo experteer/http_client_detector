@@ -24,16 +24,16 @@ Gem::Specification.new do |s|
 
   s.specification_version = 3
 
-  s.add_runtime_dependency(%q<rack>, ['1.4.5'])
-  s.add_runtime_dependency(%q<rack-contrib>, ['1.1.0'])
-  s.add_runtime_dependency(%q<rest-client>, ['1.6.7'])
-  s.add_runtime_dependency(%q<json>, ['~> 1.7'])
+  s.add_runtime_dependency "rack", "1.4.5"
+  s.add_runtime_dependency "rack-contrib", "1.1.0"
+  s.add_runtime_dependency "rest-client", "1.6.7"
+  s.add_runtime_dependency "json", "~> 1.7"
 
-  s.add_development_dependency(%q<rake>, ['0.8.7'])
-  s.add_development_dependency(%q<rack-test>, ['~> 0.6'])
-  s.add_development_dependency(%q<rspec>, ['~> 2.14'])
-  s.add_development_dependency(%q<mime-types>, ['~> 1.25'])
-  s.add_development_dependency(%q<webmock>, ['~> 1.13'])
+  s.add_development_dependency "rake", "0.8.7"
+  s.add_development_dependency "rack-test", "~> 0.6"
+  s.add_development_dependency "rspec", "~> 2.14"
+  s.add_development_dependency "mime-types", "~> 1.25"
+  s.add_development_dependency "webmock", "~> 1.13"
 
 
 end
