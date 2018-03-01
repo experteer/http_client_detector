@@ -80,7 +80,7 @@ class HttpClientDetector
   end
 
   def data_from_service(user_agent)
-    api_endpoint = @config[:url]
+    api_endpoint = @config[:url].dup
     if api_endpoint =~ /\/$/
       api_endpoint << 'debug'
     else
