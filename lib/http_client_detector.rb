@@ -80,7 +80,8 @@ class HttpClientDetector
   end
 
   def data_from_service(user_agent)
-    resp = RestClient.get(@config[:url], { :accept => :json, :user_agent =>  user_agent, :experteer_service => 'client_detector'})
+    api_endpoint = "#{ @config[:url] }/debug"
+    resp = RestClient.get(api_endpoint, { :accept => :json, :user_agent =>  user_agent, :experteer_service => 'client_detector'})
 
     JSON.parse(resp.body)
 
