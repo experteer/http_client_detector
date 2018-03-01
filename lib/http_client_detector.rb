@@ -80,7 +80,13 @@ class HttpClientDetector
   end
 
   def data_from_service(user_agent)
-    api_endpoint = "#{ @config[:url] }/debug"
+    api_endpoint = @config[:url]
+    if api_endpoint =~ /\/$/
+      api_endpoint << 'debug'
+    else
+      api_endpoint << '/debug'
+    end
+
     resp = RestClient.get(api_endpoint, { :accept => :json, :user_agent =>  user_agent, :experteer_service => 'client_detector'})
 
     JSON.parse(resp.body)
