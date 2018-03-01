@@ -4,6 +4,7 @@ module Rack
     # @param [Hash] raw_data expects to contain keys: 'verified', 'phone', 'robot'
     # if raw_data is blank, all these values will be set to false (as a fall-back scenario)
     def load_from_raw_data(raw_data)
+      return self.freeze if raw_data.nil?
       debug = raw_data.delete('debug') || raw_data.delete(:debug) || { }
       data = raw_data
       data.each do |key, value|
@@ -12,7 +13,6 @@ module Rack
       debug.each do |key, value|
         self[key.to_sym] = value
       end
-
       self.freeze
     end
 
