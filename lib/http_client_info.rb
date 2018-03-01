@@ -1,13 +1,16 @@
 module Rack
   class HttpClientInfo < ::Hash
 
-
     # @param [Hash] raw_data expects to contain keys: 'verified', 'phone', 'robot'
     # if raw_data is blank, all these values will be set to false (as a fall-back scenario)
     def load_from_raw_data(raw_data)
-      raw_data ||= { }
-      %w{phone robot verified is_app}.each do |key|
-        self[key.to_sym] = (raw_data[key] == true)
+      debug = raw_data.delete('debug') || raw_data.delete(:debug) || { }
+      data = raw_data
+      data.each do |key, value|
+        self[key.to_sym] = value
+      end
+      debug.each do |key, value|
+        self[key.to_sym] = value
       end
 
       self.freeze
