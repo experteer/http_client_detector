@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency "rack", ">= 1.4"
   s.add_runtime_dependency "rack-contrib", "~> 1.2.0"
-  s.add_runtime_dependency "rest-client", "1.6.7"
+  s.add_runtime_dependency "rest-client", "1.8.0"
   s.add_runtime_dependency "json", "~> 1.7"
 
   s.add_development_dependency "rake", "0.8.7"
