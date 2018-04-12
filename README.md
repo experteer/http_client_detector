@@ -5,8 +5,12 @@ A Rack middleware that detects the caracteristics of http client, taking into ac
 ## Quick Installation and Testing
 ```bash
   git clone https://github.com/experteer/http_client_detector.git
-  bundle
-  rspec
+
+  cd http_client_detector
+  docker run --rm -it -v $PWD:/detector -p 9292:9292 --name=detector -w /detector  registry.experteer.com/experteer/docker-ruby:2.4.3 /bin/bash
+  bundle install --binstubs --path=gems
+
+  bin/rspec spec
 ```
 
 ## Docker Setup
@@ -39,4 +43,3 @@ add to Gemfile:
   request.env['rack.http_client_info'].robot?
   request.env['rack.http_client_info'].verified?
 ```
-

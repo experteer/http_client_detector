@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'http_client_detector'
-  s.version = '0.2.8'
+  s.version = '0.3.0'
 
   s.required_rubygems_version = Gem::Requirement.new('>= 0') if s.respond_to? :required_rubygems_version=
   s.authors = ['Taras Struk']
@@ -26,14 +26,15 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency "rack", ">= 1.4"
   s.add_runtime_dependency "rack-contrib", "~> 1.2.0"
-  s.add_runtime_dependency "rest-client", "1.6.7"
+  s.add_runtime_dependency "rest-client", "1.8.0"
   s.add_runtime_dependency "json", "~> 1.7"
 
-  s.add_development_dependency "rake", "0.8.7"
-  s.add_development_dependency "rack-test", "~> 0.6"
-  s.add_development_dependency "rspec", "~> 2.14"
-  s.add_development_dependency "mime-types", "~> 1.25"
-  s.add_development_dependency "webmock", "~> 1.13"
+  s.add_development_dependency "rake"
+  s.add_development_dependency "pry"
+  s.add_development_dependency "rack-test"
+  s.add_development_dependency "rspec"
+  s.add_development_dependency "mime-types"
+  s.add_development_dependency "webmock"
 
 
 end

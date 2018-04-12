@@ -9,6 +9,7 @@ require 'json'
 require 'cgi'
 require 'rest_client'
 require 'webmock/rspec'
+require 'pry'
 
 WebMock.disable_net_connect!
 
@@ -29,5 +30,5 @@ end
 
 RSpec.configure do |c|
   c.include RSpecAppMixin
-  c.add_setting :detector_test_url, :default => 'http://client-detector-test.experteer.com/'
+  c.add_setting :detector_test_url, :default => 'http://client-detector-test.experteer.com/debug'
 end
