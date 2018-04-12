@@ -21,12 +21,12 @@ describe 'DetectorApp' do
       set_cookie 'testkey=testvalue'
       get 'http://api.experteer.com/', {}, 'HTTP_USER_AGENT' => iphone
 
-      service_request.should_not have_been_requested
+      expect(service_request).to_not have_been_requested
     end
 
 
     it 'should respond with status 200' do
-      last_response.status.should == 200
+     expect(last_response.status).to eq(200)
     end
   end
 
@@ -39,12 +39,12 @@ describe 'DetectorApp' do
 
       get 'http://admin.Experteer.de/', {}, 'HTTP_USER_AGENT' => iphone
 
-      service_request.should_not have_been_requested
+      expect(service_request).to_not have_been_requested
     end
 
 
     it 'should respond with status 200' do
-      last_response.status.should == 200
+      expect(last_response.status).to eq(200)
     end
   end
 
@@ -58,12 +58,12 @@ describe 'DetectorApp' do
 
       post '/', {}, 'HTTP_USER_AGENT' => iphone
 
-      service_request.should_not have_been_requested
+      expect(service_request).to_not have_been_requested
     end
 
 
     it 'should respond with status 200' do
-      last_response.status.should == 200
+      expect(last_response.status).to eq(200)
     end
   end
 
@@ -76,34 +76,38 @@ describe 'DetectorApp' do
 
       set_cookie 'testkey=testvalue'
       get '/', {}, 'HTTP_USER_AGENT' => iphone
-
-      service_request.should have_been_requested
     end
 
 
     it 'should respond with status 200' do
-      last_response.status.should == 200
+      expect(last_response.status).to eq(200)
     end
 
     describe 'response body' do
       subject{ JSON.parse(last_response.body) }
 
-      its(['verified']){ should == iphone_info[:verified] }
-      its(['phone']){ should == iphone_info[:phone] }
-      its(['robot']){ should == iphone_info[:robot] }
+      it "sets response values" do
+        expect(subject['verified']).to eq(iphone_info[:verified] )
+        expect(subject['phone']).to eq(iphone_info[:phone] )
+        expect(subject['robot']).to eq(iphone_info[:robot] )
+      end
 
     end
 
     describe 'response headers' do
       subject{ last_response.headers }
 
-      its(['Set-Cookie']){should match(/http_client_info=.+;/)}
+      it 'sets cookie' do
+        expect(subject['Set-Cookie']).to  match(/http_client_info=.+;/)
+      end
     end
 
     describe 'response header Set-Cookie http_client_info' do
       subject{ JSON.parse(CGI.unescape /http_client_info=(.+?);/.match(last_response.headers['Set-Cookie'])[1]) }
 
-      it {should == {'phone'=>true, 'verified'=>true, 'robot'=>false} }
+      it 'contains info' do
+            expect(subject).to include('phone'=>true, 'verified'=>true, 'robot'=>false)
+      end
     end
 
   end
@@ -118,21 +122,22 @@ describe 'DetectorApp' do
       set_cookie "http_client_info=#{ CGI.escape(iphone_info.to_json) }"
       get '/', {}, 'HTTP_USER_AGENT' => iphone
 
-      service_request.should_not have_been_requested
+      expect(service_request).to_not have_been_requested
     end
 
 
     it 'should respond with status 200' do
-      last_response.status.should == 200
+      expect(last_response.status).to eq(200)
     end
 
     describe 'response body' do
       subject{ JSON.parse(last_response.body) }
 
-      its(['verified']){ should == iphone_info[:verified] }
-      its(['phone']){ should == iphone_info[:phone] }
-      its(['robot']){ should == iphone_info[:robot] }
-
+      it "sets response values" do
+        expect(subject['verified']).to eq(iphone_info[:verified] )
+        expect(subject['phone']).to eq(iphone_info[:phone] )
+        expect(subject['robot']).to eq(iphone_info[:robot] )
+      end
     end
   end
 
@@ -146,20 +151,22 @@ describe 'DetectorApp' do
 
       get '/', {}, 'HTTP_USER_AGENT' => iphone
 
-      service_request.should have_been_requested
+      expect(service_request).to have_been_requested
     end
 
 
     it 'should respond with status 200' do
-      last_response.status.should == 200
+      expect(last_response.status).to eq(200)
     end
 
     describe 'response body' do
       subject{ JSON.parse(last_response.body) }
 
-      its(['verified']){ should == false }
-      its(['phone']){ should == false }
-      its(['robot']){ should == false }
+      it "sets response values" do
+        expect(subject['verified']).to be_falsey
+        expect(subject['phone']).to  be_falsey
+        expect(subject['robot']).to  be_falsey
+      end
 
     end
 
