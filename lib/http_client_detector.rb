@@ -1,8 +1,8 @@
-require "#{File.dirname(__FILE__)}/http_client_info"
+require_relative "http_client_info"
 require 'cgi'
 require 'json'
 require 'logger'
-require 'rest_client'
+require 'net/http'
 require 'rack/contrib/cookies'
 
 class HttpClientDetector
@@ -87,13 +87,30 @@ class HttpClientDetector
       api_endpoint << '/debug'
     end
 
-    resp = RestClient.get(api_endpoint, { :accept => :json, :user_agent =>  user_agent, :experteer_service => 'client_detector'})
+    resp = get(
+      api_endpoint,
+      'Accept' => 'application/json',
+      'User-Agent' =>  user_agent,
+      'Experteer-Service' => 'client_detector'
+    )
 
     JSON.parse(resp.body)
-
   rescue => e
     logger.error("http_client_detector: getting data from service failed: #{e.class} #{e.message}")
     nil
   end
 
+  def get(url, headers)
+    uri = URI(url)
+    request = Net::HTTP::Get.new(url)
+    headers.each do |name, value|
+      request[name.to_s] = value.to_s
+    end
+
+    response = Net::HTTP.start(uri.hostname, uri.port) do |http|
+      http.request(request)
+    end
+    response.value # raise if the response code is not 2xx
+    response
+  end
 end
