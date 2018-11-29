@@ -7,7 +7,6 @@ ENV['RACK_ENV'] = 'test'
 require 'rack/test'
 require 'json'
 require 'cgi'
-require 'rest_client'
 require 'webmock/rspec'
 require 'pry'
 
